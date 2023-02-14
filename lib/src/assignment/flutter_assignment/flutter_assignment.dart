@@ -17,16 +17,34 @@ import 'package:flutter_assignment/src/assignment/flutter_assignment/model/dragg
 
 // git - pyowonsik branch에서 작업 하고 기능 단위 커밋 -> origin pyowonsik push -> github에서 PR 후 Merge 하기
 
-class FlutterAssignment extends StatefulWidget {
-  const FlutterAssignment({Key? key}) : super(key: key);
+import 'package:flutter/material.dart';
+
+void main() => runApp(const ReorderableApp());
+
+class ReorderableApp extends StatelessWidget {
+  const ReorderableApp({super.key});
 
   @override
-  _FlutterAssignment createState() => _FlutterAssignment();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('ReorderableListView Sample')),
+        body: const ReorderableExample(),
+      ),
+    );
+  }
 }
 
-class _FlutterAssignment extends State<FlutterAssignment> {
-  
-  
+class ReorderableExample extends StatefulWidget {
+  const ReorderableExample({super.key});
+
+  @override
+  State<ReorderableExample> createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<ReorderableExample> {
+  final List<int> _items = List<int>.generate(10, (int index) => index);
+
   List<int> arrNum = [];
   var randNum;
 
@@ -40,177 +58,259 @@ class _FlutterAssignment extends State<FlutterAssignment> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
+    final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
+
     return Scaffold(
         body: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    randNum = Random().nextInt(100) + 1;
-                    arrNum.add(randNum);
-                  });
-                },
-                child: Text('추가')),
-          ],
+        ElevatedButton(
+            onPressed: () {
+              setState(() {
+                randNum = Random().nextInt(100) + 1;
+                arrNum.add(randNum);
+              });
+            },
+            child: Text('추가')),
+        SizedBox(
+          height: 30,
         ),
         Expanded(
-          child: ListView.builder(
-              itemCount: arrNum.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            arrNum[index] += 1;
-                          });
-                        },
-                        child: SizedBox(
-                            height: 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Card(
-                                  child: Text(
-                                    arrNum[index].toString(),
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            )),
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            arrNum.remove(arrNum[index]);
-                          });
-                        },
-                        child: Text('삭제')),
-                  ],
-                );
-              }),
-        ),
+            child: ReorderableListView(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          children: [
+            for (int index = 0; index < arrNum.length; index += 1)
+              ListTile(
+                onTap: () {
+                  setState(() {
+                    arrNum[index]++;
+                  });
+                },
+                key: Key('$index'),
+                tileColor: arrNum[index].isOdd ? oddItemColor : evenItemColor,
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${arrNum[index]}'),
+                      ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              arrNum.remove(arrNum[index]);
+                            });
+                          },
+                          child: Text('삭제')),
+                    ]),
+              ),
+          ],
+          onReorder: (int oldIndex, int newIndex) {
+            setState(() {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              final int item = arrNum.removeAt(oldIndex);
+              arrNum.insert(newIndex, item);
+            });
+          },
+        )),
       ],
     ));
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-  @override
-  _MainPage createState() => _MainPage();
-}
 
-class _MainPage extends State<MainPage> {
-  late List<DragAndDropList> lists;
 
-  @override
-  void initState() {
-    super.initState();
-    lists = allLists.map(buildList).toList();
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    final backgroundColor = Color.fromARGB(255, 243, 242, 248);
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        centerTitle: true,
-      ),
-      body: DragAndDropLists(
-        // lastItemTargetHeight: 50,
-        // addLastItemTargetHeightToTop: true,
-        // lastListTargetSize: 30,
-        listPadding: EdgeInsets.all(16),
-        listInnerDecoration: BoxDecoration(
-          color: Theme.of(context).canvasColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        children: lists,
-        itemDivider: Divider(thickness: 2, height: 2, color: backgroundColor),
-        itemDecorationWhileDragging: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-        ),
-        listDragHandle: buildDragHandle(isList: true),
-        itemDragHandle: buildDragHandle(),
-        onItemReorder: onReorderListItem,
-        onListReorder: onReorderList,
-      ),
-    );
-  }
 
-  DragHandle buildDragHandle({bool isList = false}) {
-    final verticalAlignment = isList
-        ? DragHandleVerticalAlignment.top
-        : DragHandleVerticalAlignment.center;
-    final color = isList ? Colors.blueGrey : Colors.black26;
 
-    return DragHandle(
-      verticalAlignment: verticalAlignment,
-      child: Container(
-        padding: EdgeInsets.only(right: 10),
-        child: Icon(Icons.menu, color: color),
-      ),
-    );
-  }
 
-  DragAndDropList buildList(DraggableList list) => DragAndDropList(
-        header: Container(
-          padding: EdgeInsets.all(8),
-          child: Text(
-            list.header,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-        ),
-        children: list.items
-            .map((item) => DragAndDropItem(
-                  child: ListTile(
-                    leading: Image.network(
-                      item.urlImage,
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
-                    title: Text(item.title),
-                  ),
-                ))
-            .toList(),
-      );
 
-  void onReorderListItem(
-    int oldItemIndex,
-    int oldListIndex,
-    int newItemIndex,
-    int newListIndex,
-  ) {
-    setState(() {
-      final oldListItems = lists[oldListIndex].children;
-      final newListItems = lists[newListIndex].children;
 
-      final movedItem = oldListItems.removeAt(oldItemIndex);
-      newListItems.insert(newItemIndex, movedItem);
-    });
-  }
 
-  void onReorderList(
-    int oldListIndex,
-    int newListIndex,
-  ) {
-    setState(() {
-      final movedList = lists.removeAt(oldListIndex);
-      lists.insert(newListIndex, movedList);
-    });
-  }
-}
+
+
+
+
+
+
+
+
+// class MainPage extends StatefulWidget {
+//   const MainPage({super.key});
+//   @override
+//   _MainPage createState() => _MainPage();
+// }
+
+// class _MainPage extends State<MainPage> {
+//   List<int> arrNum = [];
+//   List<DragAndDropList> _contents = [];
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     for (var i = 0; i < 10; i++) {
+//       arrNum.add(Random().nextInt(100) + 1);
+//     }
+
+//     // Generate a list
+//     _contents = List.generate(10, (index) {
+//       return DragAndDropList(
+//         children: <DragAndDropItem>[
+//           DragAndDropItem(
+//             child: InkWell(
+//               onTap: (){
+//                 setState(() {
+//                    arrNum[index] += 1;
+//                    print(arrNum[index]);
+//                 });
+//                },
+//               child: SizedBox(
+//                 height: 100,
+//                 child: Row(
+//                   children: [
+//                     Card(
+//                       child: Text(arrNum[index].toString()),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ],
+//       );
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Column(
+//         children: [
+//           ElevatedButton(
+//               onPressed: () {
+//                 setState(() {});
+//               },
+//               child: Text('추가')),
+//           Expanded(
+//             child: DragAndDropLists(
+
+//             children: _contents,
+//             // listDragHandle: buildDragHandle(isList: true),
+//             itemDragHandle: buildDragHandle(),
+//             onItemReorder: _onItemReorder,
+//             onListReorder: _onListReorder,
+//           )),
+//         ],
+//       ),
+//     );
+//   }
+
+//   DragHandle buildDragHandle({bool isList = false}) {
+//     final verticalAlignment = isList
+//         ? DragHandleVerticalAlignment.top
+//         : DragHandleVerticalAlignment.center;
+//     final color = isList ? Colors.blueGrey : Colors.black26;
+
+//     return DragHandle(
+//       verticalAlignment: verticalAlignment,
+//       child: Row(children: [
+//         ElevatedButton(onPressed: () {}, child: Text('삭제')),
+//         Icon(Icons.menu, color: color),
+//       ]),
+//     );
+//   }
+
+//   _onItemReorder(
+//       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+//     setState(() {
+//       var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
+//       _contents[newListIndex].children.insert(newItemIndex, movedItem);
+//     });
+//   }
+
+//   _onListReorder(int oldListIndex, int newListIndex) {
+//     setState(() {
+//       var movedList = _contents.removeAt(oldListIndex);
+//       _contents.insert(newListIndex, movedList);
+//     });
+//   }
+// }
+
+// class FlutterAssignment extends StatefulWidget {
+//   const FlutterAssignment({Key? key}) : super(key: key);
+
+//   @override
+//   _FlutterAssignment createState() => _FlutterAssignment();
+// }
+
+// class _FlutterAssignment extends State<FlutterAssignment> {
+//   List<int> arrNum = [];
+//   var randNum;
+
+//   // 화면 변화할때 사용.
+//   void initState() {
+//     super.initState();
+//     for (var i = 0; i < 10; i++) {
+//       arrNum.add(Random().nextInt(100) + 1);
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           ElevatedButton(
+//               onPressed: () {
+//                 setState(() {
+//                   randNum = Random().nextInt(100) + 1;
+//                   arrNum.add(randNum);
+//                 });
+//               },
+//               child: Text('추가')),
+//         ],
+//       ),
+//       Expanded(
+//           child: ListView.builder(
+//               itemCount: arrNum.length,
+//               itemBuilder: (BuildContext context, int index) {
+//                 return Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Expanded(
+//                           child: InkWell(
+//                         onTap: () {
+//                           setState(() {
+//                             arrNum[index] += 1;
+//                           });
+//                         },
+//                         child: SizedBox(
+//                           height: 100,
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Text(
+//                                 arrNum[index].toString(),
+//                                 style: TextStyle(
+//                                     fontSize: 20, fontWeight: FontWeight.bold),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       )),
+//                       ElevatedButton(
+//                           onPressed: () {
+//                             setState(() {
+//                               arrNum.remove(arrNum[index]);
+//                             });
+//                           },
+//                           child: Text('삭제')),
+//                     ]);
+//               })),
+//     ]));
+//   }
+// }

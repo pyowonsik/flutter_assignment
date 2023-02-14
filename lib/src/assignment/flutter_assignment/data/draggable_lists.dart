@@ -1,3 +1,4 @@
+
 import 'package:flutter_assignment/src/assignment/flutter_assignment/model/draggabl_list.dart';
 
 List<DraggableList> allLists = [
@@ -10,7 +11,6 @@ List<DraggableList> allLists = [
             'https://images.unsplash.com/photo-1582979512210-99b6a53386f9?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=934&q=80',
       ),
       DraggableListItem(
-
         title: 'Apple',
         urlImage:
             'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3367&q=80',

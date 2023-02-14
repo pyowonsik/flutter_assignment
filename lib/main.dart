@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       ),
       // home: const FlutterAssignment(),
       
-      home: const FlutterAssignment(),
+      home: const ReorderableApp(),
     );
   }
 }
