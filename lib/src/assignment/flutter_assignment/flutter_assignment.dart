@@ -33,12 +33,9 @@ class _FlutterAssignment extends State<FlutterAssignment> {
   // 화면 변화할때 사용.
   void initState() {
     super.initState();
-
     for (var i = 0; i < 10; i++) {
       arrNum.add(Random().nextInt(100) + 1);
     }
-  
-  
   }
 
   @override
@@ -119,7 +116,6 @@ class _MainPage extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-
     lists = allLists.map(buildList).toList();
   }
 
