@@ -65,6 +65,9 @@ class _MyStatefulWidgetState extends State<ReorderableExample> {
     return Scaffold(
         body: Column(
       children: [
+        SizedBox(
+          height: 30,
+        ),
         ElevatedButton(
             onPressed: () {
               setState(() {
@@ -88,7 +91,7 @@ class _MyStatefulWidgetState extends State<ReorderableExample> {
                   });
                 },
                 key: Key('$index'),
-                tileColor: arrNum[index].isOdd ? oddItemColor : evenItemColor,
+                // tileColor: arrNum[index].isOdd ? oddItemColor : evenItemColor,
                 title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -101,6 +104,7 @@ class _MyStatefulWidgetState extends State<ReorderableExample> {
                           },
                           child: Text('삭제')),
                     ]),
+                trailing: Icon(Icons.menu),
               ),
           ],
           onReorder: (int oldIndex, int newIndex) {
