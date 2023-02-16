@@ -1,11 +1,4 @@
 import 'dart:math';
-
-// import 'package:drag_and_drop_lists/drag_and_drop_item.dart';
-// import 'package:drag_and_drop_lists/drag_and_drop_list.dart';
-// import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
-// import 'package:draggable_fab/draggable_fab.dart';
-// import 'package:flutter_assignment/src/assignment/flutter_assignment/data/draggable_lists.dart';
-// import 'package:flutter_assignment/src/assignment/flutter_assignment/model/draggabl_list.dart';
 import 'package:flutter/material.dart';
 
 // 과제 1.
@@ -14,6 +7,8 @@ import 'package:flutter/material.dart';
 // 3. 카드의 위치는 drag and drop을 통해 변경이 가능하다.
 // 4. 카드 상단에 삭제 버튼을 통해 카드를 제거할 수 있다.
 // 5. 카드 추가 버튼을 통해 새로운 숫자 카드를 추가할 수 있다. 추가 시 카드 리스트의 최하단에 추가한다.
+
+// 이동중 index 변화 내려가면 ++ 로 올리고 내려가면 -- 내린다.
 
 // git - pyowonsik branch에서 작업 하고 기능 단위 커밋 -> origin pyowonsik push -> github에서 PR 후 Merge 하기
 
@@ -27,20 +22,32 @@ class FlutterAssignment extends StatefulWidget {
 Random randomSeed = Random();
 
 class _FlutterAssignment extends State<FlutterAssignment> {
-  List<int> numbers = [];
-  var changeNumber;
+  List<int> numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   var resultNumber = 0;
-
   var result = 0;
-
+  var postNumber = 0;
+  bool _isDragging = false;
   // int? randNum;
+
   // 화면 변화할때 사용.
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < 10; i++) {
-      numbers.add(randomSeed.nextInt(100) + 1);
-    }
+    // for (var i = 0; i < 10; i++) {
+    //   numbers.add(randomSeed.nextInt(100) + 1);
+    // }
+  }
+
+  void _setIsDragging() {
+    setState(() {
+      _isDragging = true;
+    });
+  }
+
+  void _resetIsDragging() {
+    setState(() {
+      _isDragging = false;
+    });
   }
 
   @override
@@ -61,183 +68,126 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                   child: const Text('추가')),
             ],
           ),
-          // feedback = cur index.toString
-          // child = list
-          // dragtarget = pre index.toString
-
           Expanded(
             child: ListView.builder(
                 itemCount: numbers.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Column(
-                    children: [
-                      //
-
-                      Draggable(
-                        data: numbers[index],
-
-                        //feedback
-                        feedback: GestureDetector(
-                          onTap: () {
-                            setState(() {});
+                  // !(_isDragging) = true라 드래깅 가능 ,
+                  // 드래깅이 끝나는 순간 부터 false가 되어 target위젯
+                  // 다시 드래깅 true가 되면서 draggable 위젯
+                  return !(_isDragging)
+                      ? Draggable(
+                          data: numbers[index],
+                          onDragStarted: () {
+                            postNumber = numbers[index];
+                            _setIsDragging();
                           },
-                          child: SizedBox(
-                            height: 100,
-                            child: Card(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      numbers[index].toString(),
-                                      style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    ElevatedButton(
-                                        onPressed: () {},
-                                        child: const Text('삭제')),
-                                  ],
+                          onDraggableCanceled: (_, __) {
+                            _resetIsDragging();
+                          },
+                          onDragCompleted: () {
+                            _resetIsDragging();
+                          },
+                          feedback: Material(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    numbers[index].toString(),
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text('삭제')),
+                                ],
+                              ),
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                numbers[index]++;
+                              });
+                            },
+                            child: SizedBox(
+                              height: 100,
+                              child: Card(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        numbers[index].toString(),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              numbers.remove(numbers[index]);
+                                            });
+                                          },
+                                          child: const Text('삭제')),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-
-                        // child
-                        child: GestureDetector(
-                          onTap: () {
+                        )
+                      : DragTarget(
+                          builder: (
+                            BuildContext context,
+                            List<dynamic> accepted,
+                            List<dynamic> rejected,
+                          ) {
+                            return SizedBox(
+                              height: 100,
+                              child: Card(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        numbers[index].toString(),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              numbers.remove(numbers[index]);
+                                            });
+                                          },
+                                          child: const Text('삭제')),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          onAccept: (int data) {
                             setState(() {
-                              numbers[index]++;
+                              numbers[index] = data;
                             });
                           },
-                          child: SizedBox(
-                            height: 100,
-                            child: Card(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      numbers[index].toString(),
-                                      style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            numbers.remove(numbers[index]);
-                                          });
-                                        },
-                                        child: const Text('삭제')),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // onDragStarted: () {
-                        //   print(index);
-
-                        //   // 드래그 타겟을 다른 리스트의 인덱스로 바꿔줌
-                        //   DragTarget(
-                        //     builder: (
-                        //       BuildContext context,
-                        //       List<dynamic> accepted,
-                        //       List<dynamic> rejected,
-                        //     ) {
-                        //       return Container();
-                        //     },
-                        //     onAccept: (data) {
-                        //       setState(() {
-                        //         data:
-                        //         result;
-                        //       });
-                        //     },
-                        //   );
-                        // },
-                      ),
-
-                      // Sample Target
-                      DragTarget(
-                        builder: (
-                          BuildContext context,
-                          List<dynamic> accepted,
-                          List<dynamic> rejected,
-                        ) {
-                          return SizedBox(
-                            height: 100,
-                            child: Card(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      result.toString(),
-                                      style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {});
-                                        },
-                                        child: const Text('삭제')),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        onAccept: (int data) {
-                          setState(() {
-                            changeNumber = result;
-                            result = numbers[index];
-                            numbers[index] = changeNumber;
-                          });
-                        },
-                      ),
-                      // Sample Target
-                    ],
-                  );
+                        );
                 }),
           ),
-          // Sample Target
-          // DragTarget(
-          //   builder: (
-          //     BuildContext context,
-          //     List<dynamic> accepted,
-          //     List<dynamic> rejected,
-          //   ) {
-          //     return Container(
-          //       height: 100.0,
-          //       width: 100.0,
-          //       color: Colors.cyan,
-          //       child: Center(
-          //         child: Text(
-          //           'Re:  ${result}',
-          //           style: TextStyle(fontSize: 20),
-          //         ),
-          //       ),
-          //     );
-          //   },
-          //   onAccept: (int data) {
-          //     setState(() {
-          //       result = data;
-          //     });
-          //   },
-          // ),
         ],
       ),
     );
