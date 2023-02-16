@@ -26,7 +26,7 @@ class FlutterAssignment extends StatefulWidget {
 Random randomSeed = Random();
 
 class _FlutterAssignment extends State<FlutterAssignment> {
-  List<int> numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  List<int> numbers = [];
   bool _isDragging = false;
   int draggableNumber = 0;
   int draggableIndex = 0;
@@ -36,9 +36,9 @@ class _FlutterAssignment extends State<FlutterAssignment> {
   @override
   void initState() {
     super.initState();
-    // for (var i = 0; i < 10; i++) {
-    //   numbers.add(randomSeed.nextInt(100) + 1);
-    // }
+    for (var i = 0; i < 10; i++) {
+      numbers.add(randomSeed.nextInt(100) + 1);
+    }
   }
 
   @override
