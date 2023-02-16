@@ -1,12 +1,5 @@
 import 'dart:math';
-
-import 'package:drag_and_drop_lists/drag_and_drop_item.dart';
-import 'package:drag_and_drop_lists/drag_and_drop_list.dart';
-import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
-import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_assignment/src/assignment/flutter_assignment/data/draggable_lists.dart';
-import 'package:flutter_assignment/src/assignment/flutter_assignment/model/draggabl_list.dart';
 
 // 과제 1.
 // 1. 초기에 10개의 랜덤한 숫자를 생성해 card 형태로 보여준다.
@@ -17,226 +10,229 @@ import 'package:flutter_assignment/src/assignment/flutter_assignment/model/dragg
 
 // git - pyowonsik branch에서 작업 하고 기능 단위 커밋 -> origin pyowonsik push -> github에서 PR 후 Merge 하기
 
-import 'package:flutter/material.dart';
+// draggable target 분류
+// !(_isDragging) = true라 드래깅 가능 ,
+// 드래깅이 끝나는 순간 부터 false가 되어 target위젯
+// 다시 드래깅 true가 되면서 draggable 위젯
+// ui 는 깔아두고 index 부분만 _isDragging 상태에따라 바꿔줌
 
-void main() => runApp(const ReorderableApp());
+class FlutterAssignment extends StatefulWidget {
+  const FlutterAssignment({Key? key}) : super(key: key);
 
-class ReorderableApp extends StatelessWidget {
-  const ReorderableApp({super.key});
+  @override
+  _FlutterAssignment createState() => _FlutterAssignment();
+}
+
+Random randomSeed = Random();
+
+class _FlutterAssignment extends State<FlutterAssignment> {
+  List<int> numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  bool _isDragging = false;
+  int draggableNumber = 0;
+  int draggableIndex = 0;
+  int targetNumber = 0;
+  int currentNumber = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // for (var i = 0; i < 10; i++) {
+    //   numbers.add(randomSeed.nextInt(100) + 1);
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('ReorderableListView Sample')),
-        body: const ReorderableExample(),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 50,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        numbers.add(randomSeed.nextInt(100) + 1);
+                      });
+                    },
+                    child: const Text('추가')),
+              ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                  itemCount: numbers.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return !(_isDragging)
+                        ? Draggable(
+                            data: index,
+                            onDragStarted: () {
+                              draggableNumber = numbers[index];
+                              draggableIndex = index;
+                              setState(() {
+                                _isDragging = true;
+                              });
+                            },
+                            onDraggableCanceled: (_, __) {
+                              setState(() {
+                                _isDragging = false;
+                              });
+                            },
+                            onDragCompleted: () {
+                              setState(() {
+                                _isDragging = false;
+                              });
+                            },
+                            feedback: Material(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      numbers[index].toString(),
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    ElevatedButton(
+                                        onPressed: () {},
+                                        child: const Text('삭제')),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  numbers[index]++;
+                                });
+                              },
+                              child: SizedBox(
+                                height: 100,
+                                child: Card(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          numbers[index].toString(),
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                numbers.remove(numbers[index]);
+                                              });
+                                            },
+                                            child: const Text('삭제')),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : DragTarget(
+                            builder: (
+                              BuildContext context,
+                              List<dynamic> accepted,
+                              List<dynamic> rejected,
+                            ) {
+                              return SizedBox(
+                                height: 100,
+                                child: Card(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          numbers[index].toString(),
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                numbers.remove(numbers[index]);
+                                              });
+                                            },
+                                            child: const Text('삭제')),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            // todo : 내려가는동안 한칸씩 위로 올려야함 값을 바꿔주는 것이 아님
+
+                            onMove: (detail) {
+                              print('draggableNumber : $draggableNumber');
+                              print('draggableIndex : $draggableIndex');
+                              print(
+                                  'thisNumber : ' + numbers[index].toString());
+                              print('thisIndex : ' + index.toString());
+
+                              setState(() {
+                                if (draggableIndex == index) {
+                                  print('변화 없음');
+                                }
+                                if (draggableIndex < index) {
+                                  print('변화 필요');
+                                  print(numbers[index - 1]);
+                                  targetNumber = numbers[index];
+                                  numbers[index - 1] = numbers[index];
+                                  numbers[index] = targetNumber;
+                                }
+                                if (draggableIndex > index) {
+                                  targetNumber = numbers[index];
+                                  numbers[index + 1] = numbers[index];
+                                  numbers[index] = targetNumber;
+                                  print('변화 필요');
+                                }
+                              });
+                            },
+
+                            onAccept: (int data) {
+                              setState(() {
+                                // targetNumber = numbers[index];
+                                // print('targetNumber : $targetNumber');
+                                // print('targetIndex : $data');
+                                // numbers[data] = targetNumber;
+                                numbers[index] = draggableNumber;
+                              });
+                            },
+
+                            //
+                          );
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class ReorderableExample extends StatefulWidget {
-  const ReorderableExample({super.key});
-
-  @override
-  State<ReorderableExample> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<ReorderableExample> {
-  final List<int> _items = List<int>.generate(10, (int index) => index);
-
-  List<int> arrNum = [];
-  var randNum;
-
-  // 화면 변화할때 사용.
-  void initState() {
-    super.initState();
-    for (var i = 0; i < 10; i++) {
-      arrNum.add(Random().nextInt(100) + 1);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
-    final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
-
-    return Scaffold(
-        body: Column(
-      children: [
-        ElevatedButton(
-            onPressed: () {
-              setState(() {
-                randNum = Random().nextInt(100) + 1;
-                arrNum.add(randNum);
-              });
-            },
-            child: Text('추가')),
-        SizedBox(
-          height: 30,
-        ),
-        Expanded(
-            child: ReorderableListView(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          children: [
-            for (int index = 0; index < arrNum.length; index += 1)
-              ListTile(
-                onTap: () {
-                  setState(() {
-                    arrNum[index]++;
-                  });
-                },
-                key: Key('$index'),
-                tileColor: arrNum[index].isOdd ? oddItemColor : evenItemColor,
-                title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('${arrNum[index]}'),
-                      ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              arrNum.remove(arrNum[index]);
-                            });
-                          },
-                          child: Text('삭제')),
-                    ]),
-              ),
-          ],
-          onReorder: (int oldIndex, int newIndex) {
-            setState(() {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final int item = arrNum.removeAt(oldIndex);
-              arrNum.insert(newIndex, item);
-            });
-          },
-        )),
-      ],
-    ));
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// class MainPage extends StatefulWidget {
-//   const MainPage({super.key});
-//   @override
-//   _MainPage createState() => _MainPage();
-// }
-
-// class _MainPage extends State<MainPage> {
-//   List<int> arrNum = [];
-//   List<DragAndDropList> _contents = [];
-
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     for (var i = 0; i < 10; i++) {
-//       arrNum.add(Random().nextInt(100) + 1);
-//     }
-
-//     // Generate a list
-//     _contents = List.generate(10, (index) {
-//       return DragAndDropList(
-//         children: <DragAndDropItem>[
-//           DragAndDropItem(
-//             child: InkWell(
-//               onTap: (){
-//                 setState(() {
-//                    arrNum[index] += 1;
-//                    print(arrNum[index]);
-//                 });
-//                },
-//               child: SizedBox(
-//                 height: 100,
-//                 child: Row(
-//                   children: [
-//                     Card(
-//                       child: Text(arrNum[index].toString()),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ],
-//       );
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Column(
-//         children: [
-//           ElevatedButton(
-//               onPressed: () {
-//                 setState(() {});
-//               },
-//               child: Text('추가')),
-//           Expanded(
-//             child: DragAndDropLists(
-
-//             children: _contents,
-//             // listDragHandle: buildDragHandle(isList: true),
-//             itemDragHandle: buildDragHandle(),
-//             onItemReorder: _onItemReorder,
-//             onListReorder: _onListReorder,
-//           )),
-//         ],
-//       ),
-//     );
-//   }
-
-//   DragHandle buildDragHandle({bool isList = false}) {
-//     final verticalAlignment = isList
-//         ? DragHandleVerticalAlignment.top
-//         : DragHandleVerticalAlignment.center;
-//     final color = isList ? Colors.blueGrey : Colors.black26;
-
-//     return DragHandle(
-//       verticalAlignment: verticalAlignment,
-//       child: Row(children: [
-//         ElevatedButton(onPressed: () {}, child: Text('삭제')),
-//         Icon(Icons.menu, color: color),
-//       ]),
-//     );
-//   }
-
-//   _onItemReorder(
-//       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-//     setState(() {
-//       var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
-//       _contents[newListIndex].children.insert(newItemIndex, movedItem);
-//     });
-//   }
-
-//   _onListReorder(int oldListIndex, int newListIndex) {
-//     setState(() {
-//       var movedList = _contents.removeAt(oldListIndex);
-//       _contents.insert(newListIndex, movedList);
-//     });
-//   }
-// }
+// // Reorderable
+// import 'package:flutter/material.dart';
 
 // class FlutterAssignment extends StatefulWidget {
 //   const FlutterAssignment({Key? key}) : super(key: key);
@@ -245,72 +241,84 @@ class _MyStatefulWidgetState extends State<ReorderableExample> {
 //   _FlutterAssignment createState() => _FlutterAssignment();
 // }
 
+// Random randomSeed = Random();
+
 // class _FlutterAssignment extends State<FlutterAssignment> {
-//   List<int> arrNum = [];
-//   var randNum;
+//   // final List<int> _items = List<int>.generate(10, (int index) => index);
+//   // int? randomNumber;
+//   List<int> numbers = [];
 
 //   // 화면 변화할때 사용.
+//   @override
 //   void initState() {
 //     super.initState();
 //     for (var i = 0; i < 10; i++) {
-//       arrNum.add(Random().nextInt(100) + 1);
+//       numbers.add(randomSeed.nextInt(100) + 1);
 //     }
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
+//     // final ColorScheme colorScheme = Theme.of(context).colorScheme;
+//     // final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
+//     // final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
+
 //     return Scaffold(
-//         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-//       Row(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           ElevatedButton(
-//               onPressed: () {
-//                 setState(() {
-//                   randNum = Random().nextInt(100) + 1;
-//                   arrNum.add(randNum);
-//                 });
-//               },
-//               child: Text('추가')),
-//         ],
-//       ),
-//       Expanded(
-//           child: ListView.builder(
-//               itemCount: arrNum.length,
-//               itemBuilder: (BuildContext context, int index) {
-//                 return Row(
-//                     mainAxisAlignment: MainAxisAlignment.center,
+//         body: Column(
+//       children: [
+//         const SizedBox(
+//           height: 30,
+//         ),
+//         ElevatedButton(
+//             onPressed: () {
+//               setState(() {
+//                 // randomNumber = randomSeed.nextInt(100) + 1;
+//                 numbers.add(randomSeed.nextInt(100) + 1);
+//               });
+//             },
+//             child: const Text('추가')),
+//         const SizedBox(
+//           height: 30,
+//         ),
+//         Expanded(
+//             child: ReorderableListView(
+//           padding: const EdgeInsets.symmetric(horizontal: 40),
+//           children: [
+//             for (int index = 0; index < numbers.length; index += 1)
+//               ListTile(
+//                 onTap: () {
+//                   setState(() {
+//                     numbers[index]++;
+//                   });
+//                 },
+//                 key: Key('$index'),
+//                 // tileColor: arrNum[index].isOdd ? oddItemColor : evenItemColor,
+//                 title: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                     children: [
-//                       Expanded(
-//                           child: InkWell(
-//                         onTap: () {
-//                           setState(() {
-//                             arrNum[index] += 1;
-//                           });
-//                         },
-//                         child: SizedBox(
-//                           height: 100,
-//                           child: Row(
-//                             mainAxisAlignment: MainAxisAlignment.center,
-//                             children: [
-//                               Text(
-//                                 arrNum[index].toString(),
-//                                 style: TextStyle(
-//                                     fontSize: 20, fontWeight: FontWeight.bold),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                       )),
+//                       Text('${numbers[index]}'),
 //                       ElevatedButton(
 //                           onPressed: () {
 //                             setState(() {
-//                               arrNum.remove(arrNum[index]);
+//                               numbers.remove(numbers[index]);
 //                             });
 //                           },
-//                           child: Text('삭제')),
-//                     ]);
-//               })),
-//     ]));
+//                           child: const Text('삭제')),
+//                     ]),
+//                 trailing: const Icon(Icons.menu),
+//               ),
+//           ],
+//           onReorder: (int oldIndex, int newIndex) {
+//             setState(() {
+//               if (oldIndex < newIndex) {
+//                 newIndex -= 1;
+//               }
+//               // final int item = numbers.removeAt(oldIndex);
+//               numbers.insert(newIndex, numbers.removeAt(oldIndex));
+//             });
+//           },
+//         )),
+//       ],
+//     ));
 //   }
 // }
