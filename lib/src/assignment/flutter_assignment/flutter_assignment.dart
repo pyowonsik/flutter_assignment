@@ -12,17 +12,20 @@ class FlutterAssignment extends StatefulWidget {
 Random randomSeed = Random();
 
 class _FlutterAssignment extends State<FlutterAssignment> {
-  List<int> numbers = [];
+  List<int> numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   bool _isDragging = false;
   int dragNumber = 0;
   int dragIndex = 0;
 
+  var oldIndex;
+  var newIndex;
+
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < 10; i++) {
-      numbers.add(randomSeed.nextInt(100) + 1);
-    }
+    // for (var i = 0; i < 10; i++) {
+    //   numbers.add(randomSeed.nextInt(100) + 1);
+    // }
   }
 
   bool isDragDown(int index) {
@@ -35,16 +38,20 @@ class _FlutterAssignment extends State<FlutterAssignment> {
     return false;
   }
 
-  void changeDownNumber(int index) {
-    dragIndex++;
-    numbers[index - 1] = numbers[index];
-    numbers[index] = dragNumber;
-  }
-
-  void changeUpNumber(int index) {
-    dragIndex--;
-    numbers[index + 1] = numbers[index];
-    numbers[index] = dragNumber;
+  void insertOldIndex(int index) {
+    if (isDragDown(index)) {
+      dragIndex++;
+      // numbers[index - 1] = numbers[index];
+      // numbers[index] = dragNumber;
+      numbers.insert(index,
+          numbers.removeAt(index - 1)); // 현재 인덱스에 이전 인덱스숫자 = 들고있는 숫자를 넣어라
+    }
+    if (isDragUp(index)) {
+      dragIndex--;
+      // numbers[index + 1] = numbers[index];
+      // numbers[index] = dragNumber;
+      numbers.insert(index, numbers.removeAt(index + 1));
+    }
   }
 
   @override
@@ -190,17 +197,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                             },
                             onMove: (detail) {
                               setState(() {
-                                if (isDragDown(index)) {
-                                  changeDownNumber(index);
-                                }
-                                if (isDragUp(index)) {
-                                  changeUpNumber(index);
-                                }
-                              });
-                            },
-                            onAccept: (int data) {
-                              setState(() {
-                                numbers[index] = dragNumber;
+                                insertOldIndex(index);
                               });
                             },
                           );
