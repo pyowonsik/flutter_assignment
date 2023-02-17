@@ -15,8 +15,6 @@ class _FlutterAssignment extends State<FlutterAssignment> {
   bool _isDragging = false;
   int draggableNumber = 0;
   int draggableIndex = 0;
-  int targetNumber = 0;
-  int currentNumber = 0;
 
   @override
   void initState() {
@@ -37,7 +35,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 50,
                 ),
                 ElevatedButton(
@@ -167,35 +165,25 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                                 ),
                               );
                             },
-
                             onMove: (detail) {
                               setState(() {
                                 if (draggableIndex < index) {
                                   draggableIndex++;
-
-                                  targetNumber = numbers[index];
-                                  numbers[index - 1] = numbers[index];
-                                  numbers[index] = targetNumber;
-
+                                  numbers[index - 1] = numbers[draggableIndex];
                                   numbers[index] = draggableNumber;
                                 }
                                 if (draggableIndex > index) {
                                   draggableIndex--;
-                                  targetNumber = numbers[index];
-                                  numbers[index + 1] = numbers[index];
-                                  numbers[index] = targetNumber;
+                                  numbers[index + 1] = numbers[draggableIndex];
                                   numbers[index] = draggableNumber;
                                 }
                               });
                             },
-
                             onAccept: (int data) {
                               setState(() {
                                 numbers[index] = draggableNumber;
                               });
                             },
-
-                            //
                           );
                   }),
             ),

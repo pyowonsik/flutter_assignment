@@ -130,23 +130,23 @@ class DartAssignment extends StatelessWidget {
               onPressed: () {
                 resultAge();
               },
-              child: Text("문제 1")),
-          SizedBox(
+              child: const Text("문제 1")),
+          const SizedBox(
             width: 30,
           ),
           ElevatedButton(
               onPressed: () {
                 resultHobby();
               },
-              child: Text("문제 2")),
-          SizedBox(
+              child: const Text("문제 2")),
+          const SizedBox(
             width: 30,
           ),
           ElevatedButton(
               onPressed: () {
                 resultNegative();
               },
-              child: Text("문제 3")),
+              child: const Text("문제 3")),
         ],
       ),
     );
