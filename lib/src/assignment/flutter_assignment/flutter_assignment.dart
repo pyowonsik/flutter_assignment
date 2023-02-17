@@ -35,15 +35,15 @@ class _FlutterAssignment extends State<FlutterAssignment> {
     return false;
   }
 
-  void moveDownNumber(int index) {
+  void changeDownNumber(int index) {
     dragIndex++;
-    numbers[index - 1] = numbers[dragIndex];
+    numbers[index - 1] = numbers[index];
     numbers[index] = dragNumber;
   }
 
-  void moveUpNumber(int index) {
+  void changeUpNumber(int index) {
     dragIndex--;
-    numbers[index + 1] = numbers[dragIndex];
+    numbers[index + 1] = numbers[index];
     numbers[index] = dragNumber;
   }
 
@@ -191,10 +191,10 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                             onMove: (detail) {
                               setState(() {
                                 if (isDragDown(index)) {
-                                  moveDownNumber(index);
+                                  changeDownNumber(index);
                                 }
                                 if (isDragUp(index)) {
-                                  moveUpNumber(index);
+                                  changeUpNumber(index);
                                 }
                               });
                             },
