@@ -74,6 +74,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                             onDragStarted: () {
                               draggableNumber = numbers[index];
                               draggableIndex = index;
+
                               setState(() {
                                 _isDragging = true;
                               });
@@ -117,7 +118,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                                 });
                               },
                               child: SizedBox(
-                                height: 100,
+                                height: 50,
                                 child: Card(
                                   child: Padding(
                                     padding:
@@ -153,7 +154,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                               List<dynamic> rejected,
                             ) {
                               return SizedBox(
-                                height: 100,
+                                height: 50,
                                 child: Card(
                                   child: Padding(
                                     padding:
@@ -182,30 +183,45 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                               );
                             },
                             // todo : 내려가는동안 한칸씩 위로 올려야함 값을 바꿔주는 것이 아님
-
                             onMove: (detail) {
-                              print('draggableNumber : $draggableNumber');
-                              print('draggableIndex : $draggableIndex');
-                              print(
-                                  'thisNumber : ' + numbers[index].toString());
-                              print('thisIndex : ' + index.toString());
+                              // print('draggableNumber : $draggableNumber');
+                              // print('draggableIndex : $draggableIndex');
+                              // print(
+                              //     'thisNumber : ' + numbers[index].toString());
+                              // print('thisIndex : ' + index.toString());
 
                               setState(() {
                                 if (draggableIndex == index) {
-                                  print('변화 없음');
+                                  // print('변화 없음');
                                 }
                                 if (draggableIndex < index) {
-                                  print('변화 필요');
-                                  print(numbers[index - 1]);
+                                  // print('변화 필요');
+                                  draggableIndex++;
+                                  // print(draggableIndex);
                                   targetNumber = numbers[index];
                                   numbers[index - 1] = numbers[index];
                                   numbers[index] = targetNumber;
+                                  print(numbers[index]);
+                                  numbers[index] = draggableNumber;
+
+                                  // if (index == numbers.length - 1) {
+                                  //   print('변화 필요');
+                                  //   print(draggableNumber);
+                                  //   print(numbers[index]);
+                                  //   numbers[index] = draggableIndex;
+                                  // }
+                                  // print(index);
+                                  // print(numbers[index]);
+                                  // print(index);
+                                  // print(numbers[index]);
                                 }
                                 if (draggableIndex > index) {
+                                  draggableIndex--;
+                                  // print(draggableIndex);
                                   targetNumber = numbers[index];
                                   numbers[index + 1] = numbers[index];
                                   numbers[index] = targetNumber;
-                                  print('변화 필요');
+                                  numbers[index] = draggableNumber;
                                 }
                               });
                             },
@@ -230,95 +246,3 @@ class _FlutterAssignment extends State<FlutterAssignment> {
     );
   }
 }
-
-// // Reorderable
-// import 'package:flutter/material.dart';
-
-// class FlutterAssignment extends StatefulWidget {
-//   const FlutterAssignment({Key? key}) : super(key: key);
-
-//   @override
-//   _FlutterAssignment createState() => _FlutterAssignment();
-// }
-
-// Random randomSeed = Random();
-
-// class _FlutterAssignment extends State<FlutterAssignment> {
-//   // final List<int> _items = List<int>.generate(10, (int index) => index);
-//   // int? randomNumber;
-//   List<int> numbers = [];
-
-//   // 화면 변화할때 사용.
-//   @override
-//   void initState() {
-//     super.initState();
-//     for (var i = 0; i < 10; i++) {
-//       numbers.add(randomSeed.nextInt(100) + 1);
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // final ColorScheme colorScheme = Theme.of(context).colorScheme;
-//     // final Color oddItemColor = colorScheme.primary.withOpacity(0.05);
-//     // final Color evenItemColor = colorScheme.primary.withOpacity(0.15);
-
-//     return Scaffold(
-//         body: Column(
-//       children: [
-//         const SizedBox(
-//           height: 30,
-//         ),
-//         ElevatedButton(
-//             onPressed: () {
-//               setState(() {
-//                 // randomNumber = randomSeed.nextInt(100) + 1;
-//                 numbers.add(randomSeed.nextInt(100) + 1);
-//               });
-//             },
-//             child: const Text('추가')),
-//         const SizedBox(
-//           height: 30,
-//         ),
-//         Expanded(
-//             child: ReorderableListView(
-//           padding: const EdgeInsets.symmetric(horizontal: 40),
-//           children: [
-//             for (int index = 0; index < numbers.length; index += 1)
-//               ListTile(
-//                 onTap: () {
-//                   setState(() {
-//                     numbers[index]++;
-//                   });
-//                 },
-//                 key: Key('$index'),
-//                 // tileColor: arrNum[index].isOdd ? oddItemColor : evenItemColor,
-//                 title: Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: [
-//                       Text('${numbers[index]}'),
-//                       ElevatedButton(
-//                           onPressed: () {
-//                             setState(() {
-//                               numbers.remove(numbers[index]);
-//                             });
-//                           },
-//                           child: const Text('삭제')),
-//                     ]),
-//                 trailing: const Icon(Icons.menu),
-//               ),
-//           ],
-//           onReorder: (int oldIndex, int newIndex) {
-//             setState(() {
-//               if (oldIndex < newIndex) {
-//                 newIndex -= 1;
-//               }
-//               // final int item = numbers.removeAt(oldIndex);
-//               numbers.insert(newIndex, numbers.removeAt(oldIndex));
-//             });
-//           },
-//         )),
-//       ],
-//     ));
-//   }
-// }
