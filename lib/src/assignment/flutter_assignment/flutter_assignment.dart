@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+// draggable 의 child,feedback 안에 dragtarget 넣기
 class FlutterAssignment extends StatefulWidget {
   const FlutterAssignment({Key? key}) : super(key: key);
 
@@ -13,8 +14,8 @@ Random randomSeed = Random();
 class _FlutterAssignment extends State<FlutterAssignment> {
   List<int> numbers = [];
   bool _isDragging = false;
-  int draggableNumber = 0;
-  int draggableIndex = 0;
+  int dragNumber = 0;
+  int dragIndex = 0;
 
   @override
   void initState() {
@@ -22,6 +23,28 @@ class _FlutterAssignment extends State<FlutterAssignment> {
     for (var i = 0; i < 10; i++) {
       numbers.add(randomSeed.nextInt(100) + 1);
     }
+  }
+
+  bool isDragDown(int index) {
+    if (dragIndex < index) return true;
+    return false;
+  }
+
+  bool isDragUp(int index) {
+    if (dragIndex > index) return true;
+    return false;
+  }
+
+  void moveDownNumber(int index) {
+    dragIndex++;
+    numbers[index - 1] = numbers[dragIndex];
+    numbers[index] = dragNumber;
+  }
+
+  void moveUpNumber(int index) {
+    dragIndex--;
+    numbers[index + 1] = numbers[dragIndex];
+    numbers[index] = dragNumber;
   }
 
   @override
@@ -55,8 +78,8 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                         ? Draggable(
                             data: index,
                             onDragStarted: () {
-                              draggableNumber = numbers[index];
-                              draggableIndex = index;
+                              dragNumber = numbers[index];
+                              dragIndex = index;
 
                               setState(() {
                                 _isDragging = true;
@@ -167,21 +190,17 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                             },
                             onMove: (detail) {
                               setState(() {
-                                if (draggableIndex < index) {
-                                  draggableIndex++;
-                                  numbers[index - 1] = numbers[draggableIndex];
-                                  numbers[index] = draggableNumber;
+                                if (isDragDown(index)) {
+                                  moveDownNumber(index);
                                 }
-                                if (draggableIndex > index) {
-                                  draggableIndex--;
-                                  numbers[index + 1] = numbers[draggableIndex];
-                                  numbers[index] = draggableNumber;
+                                if (isDragUp(index)) {
+                                  moveUpNumber(index);
                                 }
                               });
                             },
                             onAccept: (int data) {
                               setState(() {
-                                numbers[index] = draggableNumber;
+                                numbers[index] = dragNumber;
                               });
                             },
                           );
