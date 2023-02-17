@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-// draggable 의 child,feedback 안에 dragtarget 넣기
 class FlutterAssignment extends StatefulWidget {
   const FlutterAssignment({Key? key}) : super(key: key);
 
@@ -16,9 +15,6 @@ class _FlutterAssignment extends State<FlutterAssignment> {
   bool _isDragging = false;
   int dragNumber = 0;
   int dragIndex = 0;
-
-  var oldIndex;
-  var newIndex;
 
   @override
   void initState() {
@@ -43,8 +39,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
       dragIndex++;
       // numbers[index - 1] = numbers[index];
       // numbers[index] = dragNumber;
-      numbers.insert(index,
-          numbers.removeAt(index - 1)); // 현재 인덱스에 이전 인덱스숫자 = 들고있는 숫자를 넣어라
+      numbers.insert(index, numbers.removeAt(index - 1));
     }
     if (isDragUp(index)) {
       dragIndex--;
@@ -81,32 +76,36 @@ class _FlutterAssignment extends State<FlutterAssignment> {
               child: ListView.builder(
                   itemCount: numbers.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return !(_isDragging)
-                        ? Draggable(
-                            data: index,
-                            onDragStarted: () {
-                              dragNumber = numbers[index];
-                              dragIndex = index;
+                    return Draggable(
+                      data: index,
+                      onDragStarted: () {
+                        dragNumber = numbers[index];
+                        dragIndex = index;
 
-                              setState(() {
-                                _isDragging = true;
-                              });
-                            },
-                            onDraggableCanceled: (_, __) {
-                              setState(() {
-                                _isDragging = false;
-                              });
-                            },
-                            onDragCompleted: () {
-                              setState(() {
-                                _isDragging = false;
-                              });
-                            },
-                            feedback: Material(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                    maxWidth:
-                                        MediaQuery.of(context).size.width),
+                        setState(() {
+                          _isDragging = true;
+                        });
+                      },
+                      onDraggableCanceled: (_, __) {
+                        setState(() {
+                          _isDragging = false;
+                        });
+                      },
+                      onDragCompleted: () {
+                        setState(() {
+                          _isDragging = false;
+                        });
+                      },
+                      feedback: Material(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxWidth: MediaQuery.of(context).size.width),
+                          child: SizedBox(
+                            height: 50,
+                            child: Card(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 0, 20, 0),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -118,49 +117,24 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                                           fontWeight: FontWeight.bold),
                                     ),
                                     ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          setState(() {});
+                                        },
                                         child: const Text('삭제')),
                                   ],
                                 ),
                               ),
                             ),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  numbers[index]++;
-                                });
-                              },
-                              child: SizedBox(
-                                height: 50,
-                                child: Card(
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          numbers[index].toString(),
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                numbers.remove(numbers[index]);
-                                              });
-                                            },
-                                            child: const Text('삭제')),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : DragTarget(
+                          ),
+                        ),
+                      ),
+                      child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              numbers[index]++;
+                            });
+                          },
+                          child: DragTarget(
                             builder: (
                               BuildContext context,
                               List<dynamic> accepted,
@@ -197,10 +171,11 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                             },
                             onMove: (detail) {
                               setState(() {
-                                insertOldNumber(index);
+                                if (_isDragging) insertOldNumber(index);
                               });
                             },
-                          );
+                          )),
+                    );
                   }),
             ),
           ],
