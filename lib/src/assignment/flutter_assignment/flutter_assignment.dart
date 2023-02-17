@@ -26,7 +26,7 @@ class FlutterAssignment extends StatefulWidget {
 Random randomSeed = Random();
 
 class _FlutterAssignment extends State<FlutterAssignment> {
-  List<int> numbers = [];
+  List<int> numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   bool _isDragging = false;
   int draggableNumber = 0;
   int draggableIndex = 0;
@@ -36,9 +36,9 @@ class _FlutterAssignment extends State<FlutterAssignment> {
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < 10; i++) {
-      numbers.add(randomSeed.nextInt(100) + 1);
-    }
+    // for (var i = 0; i < 10; i++) {
+    //   numbers.add(randomSeed.nextInt(100) + 1);
+    // }
   }
 
   @override
@@ -74,6 +74,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                             onDragStarted: () {
                               draggableNumber = numbers[index];
                               draggableIndex = index;
+
                               setState(() {
                                 _isDragging = true;
                               });
@@ -117,7 +118,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                                 });
                               },
                               child: SizedBox(
-                                height: 100,
+                                height: 50,
                                 child: Card(
                                   child: Padding(
                                     padding:
@@ -153,7 +154,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                               List<dynamic> rejected,
                             ) {
                               return SizedBox(
-                                height: 100,
+                                height: 50,
                                 child: Card(
                                   child: Padding(
                                     padding:
@@ -182,30 +183,45 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                               );
                             },
                             // todo : 내려가는동안 한칸씩 위로 올려야함 값을 바꿔주는 것이 아님
-
                             onMove: (detail) {
-                              print('draggableNumber : $draggableNumber');
-                              print('draggableIndex : $draggableIndex');
-                              print(
-                                  'thisNumber : ' + numbers[index].toString());
-                              print('thisIndex : ' + index.toString());
+                              // print('draggableNumber : $draggableNumber');
+                              // print('draggableIndex : $draggableIndex');
+                              // print(
+                              //     'thisNumber : ' + numbers[index].toString());
+                              // print('thisIndex : ' + index.toString());
 
                               setState(() {
                                 if (draggableIndex == index) {
-                                  print('변화 없음');
+                                  // print('변화 없음');
                                 }
                                 if (draggableIndex < index) {
-                                  print('변화 필요');
-                                  print(numbers[index - 1]);
+                                  // print('변화 필요');
+                                  draggableIndex++;
+                                  // print(draggableIndex);
                                   targetNumber = numbers[index];
                                   numbers[index - 1] = numbers[index];
                                   numbers[index] = targetNumber;
+                                  print(numbers[index]);
+                                  numbers[index] = draggableNumber;
+
+                                  // if (index == numbers.length - 1) {
+                                  //   print('변화 필요');
+                                  //   print(draggableNumber);
+                                  //   print(numbers[index]);
+                                  //   numbers[index] = draggableIndex;
+                                  // }
+                                  // print(index);
+                                  // print(numbers[index]);
+                                  // print(index);
+                                  // print(numbers[index]);
                                 }
                                 if (draggableIndex > index) {
+                                  draggableIndex--;
+                                  // print(draggableIndex);
                                   targetNumber = numbers[index];
                                   numbers[index + 1] = numbers[index];
                                   numbers[index] = targetNumber;
-                                  print('변화 필요');
+                                  numbers[index] = draggableNumber;
                                 }
                               });
                             },

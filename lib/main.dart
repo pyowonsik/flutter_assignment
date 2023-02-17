@@ -17,9 +17,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const FlutterAssignment(),
 
-      // home: const MyHomePage(),
+      // home: const DartAssignment(),
+      home: const FlutterAssignment(),
+      // home: const BlocAssignment(),
     );
   }
 }
