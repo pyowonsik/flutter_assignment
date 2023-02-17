@@ -38,7 +38,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
     return false;
   }
 
-  void insertOldIndex(int index) {
+  void insertOldNumber(int index) {
     if (isDragDown(index)) {
       dragIndex++;
       // numbers[index - 1] = numbers[index];
@@ -197,7 +197,7 @@ class _FlutterAssignment extends State<FlutterAssignment> {
                             },
                             onMove: (detail) {
                               setState(() {
-                                insertOldIndex(index);
+                                insertOldNumber(index);
                               });
                             },
                           );
