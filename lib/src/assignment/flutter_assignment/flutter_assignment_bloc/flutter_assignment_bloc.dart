@@ -54,35 +54,39 @@ class FlutterAssignmentBloc
 
     on<DragInfoEvent>(
       (DragInfoEvent event, emit) {
-        print('Dragg Number : ${state.numbers[event.index]}');
-        print('Dragg Index : ${event.index}');
-        state.copyWith(dragNumber: state.numbers[event.index]);
-        state.copyWith(dragIndex: event.index);
+        // print('Dragg Number : ${state.numbers[event.index]}');
+        // print('Dragg Index : ${event.index}');
+        emit(
+          state.copyWith(
+            dragNumber: state.numbers[event.index],
+            dragIndex: event.index,
+          ),
+        );
       },
     );
 
     on<DragEvent>(
       (DragEvent event, emit) {
-        print('현재 Number : ${state.numbers[event.index]}');
-        print('현재 Index : ${event.index}');
+        // print('현재 Number : ${state.numbers[event.index]}');
+        // print('현재 Index : ${event.index}');
+        List<int> copyNumbers = [...state.numbers];
+        int copyIndex = state.dragIndex;
 
         if (isDragDown(event.index)) {
-          List<int> copyNumbers = [...state.numbers];
+          copyIndex++;
           copyNumbers.insert(
               event.index, copyNumbers.removeAt(event.index - 1));
           emit(
-            state.copyWith(
-                dragIndex: state.dragIndex + 1, numbers: copyNumbers),
+            state.copyWith(dragIndex: copyIndex, numbers: copyNumbers),
           );
         }
 
         if (isDragUp(event.index)) {
-          List<int> copyNumbers = [...state.numbers];
+          copyIndex--;
           copyNumbers.insert(
               event.index, copyNumbers.removeAt(event.index + 1));
           emit(
-            state.copyWith(
-                dragIndex: state.dragIndex - 1, numbers: copyNumbers),
+            state.copyWith(dragIndex: copyIndex, numbers: copyNumbers),
           );
         }
       },
