@@ -5,6 +5,13 @@ abstract class FlutterAssignmentEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class AddNumberEvent extends FlutterAssignmentEvent {
+  final int index;
+  AddNumberEvent({required this.index});
+  @override
+  List<Object> get props => [index];
+}
+
 class AddIndexEvent extends FlutterAssignmentEvent {
   @override
   List<Object> get props => [];
@@ -15,4 +22,9 @@ class RemoveIndexEvent extends FlutterAssignmentEvent {
   RemoveIndexEvent({required this.index});
   @override
   List<Object> get props => [index];
+}
+
+class DraggingEvent extends FlutterAssignmentEvent {
+  @override
+  List<Object> get props => [];
 }

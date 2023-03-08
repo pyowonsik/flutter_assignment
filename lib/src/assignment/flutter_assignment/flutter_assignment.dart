@@ -208,30 +208,96 @@ class FlutterAssignment extends StatelessWidget {
                 child: ListView.builder(
               itemCount: state.numbers.length,
               itemBuilder: (BuildContext context, int index) {
-                return SizedBox(
-                  height: 50,
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              state.numbers[index].toString(),
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                return Draggable(
+                    onDragStarted: () {
+                      // dragNumber = numbers[index];
+                      // dragIndex = index;
+                      context
+                          .read<FlutterAssignmentBloc>()
+                          .add(DraggingEvent());
+                    },
+                    onDraggableCanceled: (_, __) {
+                      context
+                          .read<FlutterAssignmentBloc>()
+                          .add(DraggingEvent());
+                    },
+                    onDragCompleted: () {
+                      context
+                          .read<FlutterAssignmentBloc>()
+                          .add(DraggingEvent());
+                    },
+                    feedback: Material(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width),
+                        child: SizedBox(
+                          height: 50,
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    state.numbers[index].toString(),
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text('삭제')),
+                                ],
+                              ),
                             ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  context
-                                      .read<FlutterAssignmentBloc>()
-                                      .add(RemoveIndexEvent(index: index));
-                                },
-                                child: const Text('삭제')),
-                          ]),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                );
+                    child: GestureDetector(
+                      onTap: () {
+                        context
+                            .read<FlutterAssignmentBloc>()
+                            .add(AddNumberEvent(index: index));
+                      },
+                      child: DragTarget(
+                        builder: (
+                          BuildContext context,
+                          List<dynamic> accepted,
+                          List<dynamic> rejected,
+                        ) {
+                          return SizedBox(
+                            height: 50,
+                            child: Card(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        state.numbers[index].toString(),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            context
+                                                .read<FlutterAssignmentBloc>()
+                                                .add(RemoveIndexEvent(
+                                                    index: index));
+                                          },
+                                          child: const Text('삭제')),
+                                    ]),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ));
               },
             ));
           },
