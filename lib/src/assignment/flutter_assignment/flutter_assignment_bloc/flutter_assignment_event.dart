@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/services.dart';
 
 abstract class FlutterAssignmentEvent extends Equatable {
   @override
@@ -26,6 +25,11 @@ class RemoveIndexEvent extends FlutterAssignmentEvent {
 }
 
 class IsDraggingEvent extends FlutterAssignmentEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class IsNotDraggingEvent extends FlutterAssignmentEvent {
   @override
   List<Object> get props => [];
 }

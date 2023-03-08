@@ -226,12 +226,12 @@ class FlutterAssignment extends StatelessWidget {
                         onDraggableCanceled: (_, __) {
                           context
                               .read<FlutterAssignmentBloc>()
-                              .add(IsDraggingEvent());
+                              .add(IsNotDraggingEvent());
                         },
                         onDragCompleted: () {
                           context
                               .read<FlutterAssignmentBloc>()
-                              .add(IsDraggingEvent());
+                              .add(IsNotDraggingEvent());
                         },
                         feedback: Material(
                           child: ConstrainedBox(
@@ -309,13 +309,11 @@ class FlutterAssignment extends StatelessWidget {
                             onLeave: (detail) {
                               // 드래그 중일때 ,
                               // insertOldNumber 에 현재 index를 넣어주어야한다.
-
-                              // setState(() {
-                              //   if (_isDragging) insertOldNumber(index);
-                              // });
-                              context
-                                  .read<FlutterAssignmentBloc>()
-                                  .add(DragEvent(index: index));
+                              if (state.isDragging) {
+                                context
+                                    .read<FlutterAssignmentBloc>()
+                                    .add(DragEvent(index: index));
+                              }
                             },
                           ),
                         ));
