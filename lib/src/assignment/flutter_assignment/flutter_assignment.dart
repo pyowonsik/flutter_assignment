@@ -193,87 +193,57 @@ class FlutterAssignment extends StatelessWidget {
   const FlutterAssignment({super.key});
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 30),
-        ElevatedButton(
-            onPressed: () {
-              context.read<FlutterAssignmentBloc>().add(AddIndexEvent());
-            },
-            child: const Text('추가')),
-        const SizedBox(height: 30),
-        BlocBuilder<FlutterAssignmentBloc, FlutterAssignmentState>(
-          builder: (context, state) {
-            return Expanded(
-                child: ListView.builder(
-              itemCount: state.numbers.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Draggable(
-                    onDragStarted: () {
-                      // dragNumber = numbers[index];
-                      // dragIndex = index;
-                      context
-                          .read<FlutterAssignmentBloc>()
-                          .add(DraggingEvent());
-                    },
-                    onDraggableCanceled: (_, __) {
-                      context
-                          .read<FlutterAssignmentBloc>()
-                          .add(DraggingEvent());
-                    },
-                    onDragCompleted: () {
-                      context
-                          .read<FlutterAssignmentBloc>()
-                          .add(DraggingEvent());
-                    },
-                    feedback: Material(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width),
-                        child: SizedBox(
-                          height: 50,
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    state.numbers[index].toString(),
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {},
-                                      child: const Text('삭제')),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        context
-                            .read<FlutterAssignmentBloc>()
-                            .add(AddNumberEvent(index: index));
-                      },
-                      child: DragTarget(
-                        builder: (
-                          BuildContext context,
-                          List<dynamic> accepted,
-                          List<dynamic> rejected,
-                        ) {
-                          return SizedBox(
-                            height: 50,
-                            child: Card(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                                child: Row(
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
+            ElevatedButton(
+                onPressed: () {
+                  context.read<FlutterAssignmentBloc>().add(AddIndexEvent());
+                },
+                child: const Text('추가')),
+            const SizedBox(height: 30),
+            BlocBuilder<FlutterAssignmentBloc, FlutterAssignmentState>(
+              builder: (context, state) {
+                return Expanded(
+                    child: ListView.builder(
+                  itemCount: state.numbers.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Draggable(
+                        data: index,
+                        onDragStarted: () {
+                          // dragNumber = numbers[index];
+                          // dragIndex = index;
+                          context
+                              .read<FlutterAssignmentBloc>()
+                              .add(DragInfoEvent(index: index));
+                          context
+                              .read<FlutterAssignmentBloc>()
+                              .add(IsDraggingEvent());
+                        },
+                        onDraggableCanceled: (_, __) {
+                          context
+                              .read<FlutterAssignmentBloc>()
+                              .add(IsDraggingEvent());
+                        },
+                        onDragCompleted: () {
+                          context
+                              .read<FlutterAssignmentBloc>()
+                              .add(IsDraggingEvent());
+                        },
+                        feedback: Material(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                                maxWidth: MediaQuery.of(context).size.width),
+                            child: SizedBox(
+                              height: 50,
+                              child: Card(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                  child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
@@ -284,25 +254,76 @@ class FlutterAssignment extends StatelessWidget {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       ElevatedButton(
-                                          onPressed: () {
-                                            context
-                                                .read<FlutterAssignmentBloc>()
-                                                .add(RemoveIndexEvent(
-                                                    index: index));
-                                          },
+                                          onPressed: () {},
                                           child: const Text('삭제')),
-                                    ]),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ));
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            context
+                                .read<FlutterAssignmentBloc>()
+                                .add(AddNumberEvent(index: index));
+                          },
+                          child: DragTarget(
+                            builder: (
+                              BuildContext context,
+                              List<dynamic> accepted,
+                              List<dynamic> rejected,
+                            ) {
+                              return SizedBox(
+                                height: 50,
+                                child: Card(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            state.numbers[index].toString(),
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<
+                                                        FlutterAssignmentBloc>()
+                                                    .add(RemoveIndexEvent(
+                                                        index: index));
+                                              },
+                                              child: const Text('삭제')),
+                                        ]),
+                                  ),
+                                ),
+                              );
+                            },
+                            onMove: (detail) {
+                              // 드래그 중일때 ,
+                              // insertOldNumber 에 현재 index를 넣어주어야한다.
+
+                              // setState(() {
+                              //   if (_isDragging) insertOldNumber(index);
+                              // });
+                              print('현재 : ${state.numbers[index]}');
+                              print('현재 : $index');
+                            },
+                          ),
+                        ));
+                  },
+                ));
               },
-            ));
-          },
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

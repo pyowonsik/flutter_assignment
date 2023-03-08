@@ -6,7 +6,8 @@ import 'package:flutter_assignment/src/assignment/flutter_assignment/flutter_ass
 class FlutterAssignmentBloc
     extends Bloc<FlutterAssignmentEvent, FlutterAssignmentState> {
   FlutterAssignmentBloc()
-      : super(const FlutterAssignmentState(numbers: [], isDragging: false)) {
+      : super(const FlutterAssignmentState(
+            numbers: [], isDragging: false, dragNumber: 0, dragIndex: 0)) {
     Random randomSeed = Random();
 
     on<AddNumberEvent>(
@@ -45,12 +46,20 @@ class FlutterAssignmentBloc
         );
       },
     );
-    on<DraggingEvent>(
+    on<IsDraggingEvent>(
       (event, emit) {
-        print(state.isDragging);
         return (state.isDragging)
             ? emit(state.copyWith(isDragging: false))
             : emit(state.copyWith(isDragging: true));
+      },
+    );
+
+    on<DragInfoEvent>(
+      (event, emit) {
+        print('Dragg Number : ${state.numbers[event.index]}');
+        print('Dragg Index : ${event.index}');
+        state.copyWith(dragNumber: state.numbers[event.index]);
+        state.copyWith(dragIndex: event.index);
       },
     );
   }
