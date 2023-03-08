@@ -37,3 +37,12 @@ class DragInfoEvent extends FlutterAssignmentEvent {
   @override
   List<Object> get props => [index];
 }
+
+class DragEvent extends FlutterAssignmentEvent {
+  final int index;
+
+  DragEvent({required this.index});
+
+  @override
+  List<Object> get props => [index];
+}

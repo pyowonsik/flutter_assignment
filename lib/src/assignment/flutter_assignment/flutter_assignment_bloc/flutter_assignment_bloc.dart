@@ -47,7 +47,7 @@ class FlutterAssignmentBloc
       },
     );
     on<IsDraggingEvent>(
-      (event, emit) {
+      (IsDraggingEvent event, emit) {
         return (state.isDragging)
             ? emit(state.copyWith(isDragging: false))
             : emit(state.copyWith(isDragging: true));
@@ -55,12 +55,42 @@ class FlutterAssignmentBloc
     );
 
     on<DragInfoEvent>(
-      (event, emit) {
+      (DragInfoEvent event, emit) {
         print('Dragg Number : ${state.numbers[event.index]}');
         print('Dragg Index : ${event.index}');
         state.copyWith(dragNumber: state.numbers[event.index]);
         state.copyWith(dragIndex: event.index);
       },
     );
+
+    on<DragEvent>(
+      (DragEvent event, emit) {
+        print('현재 Number : ${state.numbers[event.index]}');
+        print('현재 Index : ${event.index}');
+
+        // print('내려감 : ${isDragDown(event.index)}');
+        // print('올라감 : ${isDragUp(event.index)}');
+        if (isDragDown(event.index)) {
+          List<int> copyNumbers = state.numbers;
+          copyNumbers.insert(
+              event.index, copyNumbers.removeAt(event.index - 1));
+          emit(
+            state.copyWith(
+                dragIndex: state.dragIndex + 1, numbers: copyNumbers),
+          );
+        }
+        print('DraggIndex : ${state.dragIndex}');
+      },
+    );
   }
+
+  bool isDragDown(int index) {
+    if (state.dragIndex < index) return true;
+    return false;
+  }
+
+  // bool isDragUp(int index) {
+  //   if (state.dragIndex > index) return true;
+  //   return false;
+  // }
 }
